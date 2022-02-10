@@ -31,6 +31,14 @@ Out of Scope:
 
 ## Open Questions / Areas
 
-- How does safe handle delisting of Fuse pool assets?
-- How does safe handle Fuse pool parameter changes?
+- Safe <> Fuse pool interactions
+  - How does safe handle delisting of Fuse pool assets?
+  - How does safe handle Fuse pool parameter changes?
 - less: what happens if we repay more than our debt, anything bad?
+- is it possible to write an invariant to the tune of:
+
+```txt
+for all calls to FusePool, if the call return value != 0 (i.e. is an error
+code), then the call must revert. this would help ensure consistent handling of
+interactions with FusePool
+```
