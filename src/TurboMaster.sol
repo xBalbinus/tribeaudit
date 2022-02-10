@@ -234,6 +234,7 @@ contract TurboMaster is Auth {
         uint256 newTotalBoostedAgainstCollateral = getTotalBoostedAgainstCollateral[underlying] + feiAmount;
 
         // Check with the booster that the Safe is allowed to boost the Vault using this amount of Fei.
+        // TODO: write unit test to ensure newTotalBoostedForVault & newTotalBoostedAgainstCollateral are not mixed up
         require(
             booster.canSafeBoostVault(
                 safe,
@@ -249,15 +250,13 @@ contract TurboMaster is Auth {
         // Update the total amount of Fei being using to boost Vaults.
         totalBoosted += feiAmount;
 
-        unchecked {
-            // Update the total amount of Fei being using to boost the Vault.
-            // Cannot overflow because a Safe's total will never be greater than global total.
-            getTotalBoostedForVault[vault] = newTotalBoostedForVault;
+        // Update the total amount of Fei being using to boost the Vault.
+        // Cannot overflow because a Safe's total will never be greater than global total.
+        getTotalBoostedForVault[vault] = newTotalBoostedForVault;
 
-            // Update the total amount of Fei boosted against the collateral type.
-            // Cannot overflow because a collateral type's total will never be greater than global total.
-            getTotalBoostedAgainstCollateral[underlying] = newTotalBoostedAgainstCollateral;
-        }
+        // Update the total amount of Fei boosted against the collateral type.
+        // Cannot overflow because a collateral type's total will never be greater than global total.
+        getTotalBoostedAgainstCollateral[underlying] = newTotalBoostedAgainstCollateral;
     }
 
     /// @notice Callback triggered whenever a Safe withdraws from a Vault.
@@ -275,6 +274,7 @@ contract TurboMaster is Auth {
         // Ensure the Safe was created by this Master.
         require(getSafeId[safe] != 0, "INVALID_SAFE");
 
+        // TODO: test these assumptions via invariants
         unchecked {
             // Update the total amount of Fei being using to boost the Vault.
             // Cannot underflow as the Safe validated the withdrawal amount before.

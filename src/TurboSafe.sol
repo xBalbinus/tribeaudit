@@ -74,8 +74,10 @@ contract TurboSafe is Auth, ERC4626, ReentrancyGuard {
 
         pool = master.pool();
 
+        // TODO: is it worth documenting that fei must be added to the pool prior to this call?
         feiTurboCToken = pool.cTokensByUnderlying(fei);
 
+        // TODO: what happens if fei/underlying are de-listed from the pool?
         underlyingTurboCToken = pool.cTokensByUnderlying(asset);
 
         // If the provided underlying is not supported by the Turbo Fuse Pool, revert.
