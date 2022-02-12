@@ -7,3 +7,6 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/rari-capital/solmate
+[submodule "lib/compound-protocol"]
+	path = lib/compound-protocol
+	url = https://github.com/Rari-Capital/compound-protocol
