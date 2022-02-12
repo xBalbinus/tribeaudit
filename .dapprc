@@ -1,5 +1,6 @@
 # Basic build/test configuration.
 export DAPP_SOLC_VERSION=0.8.10
+export DAPP_REMAPPINGS=$(cat remappings.txt)
 export DAPP_BUILD_OPTIMIZE=1
 export DAPP_BUILD_OPTIMIZE_RUNS=10000
 export DAPP_LINK_TEST_LIBRARIES=0

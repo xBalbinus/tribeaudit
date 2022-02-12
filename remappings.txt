@@ -1,0 +1,4 @@
+compound-protocol/=lib/compound-protocol/contracts/
+ds-test/=lib/ds-test/src/
+libcompound/=lib/libcompound/src/
+solmate/=lib/solmate/src/
