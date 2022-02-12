@@ -6,9 +6,32 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v13
-      - uses: cachix/cachix-action@v10
-        with:
-          name: dapp
-      - uses: crytic/slither-action@v0.1.0
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Set up Node
+      uses: actions/setup-node@v2
+
+    # - name: Install Yarn
+    #   run: npm install --global yarn
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v16
+
+    - name: Configure Cachix
+      uses: cachix/cachix-action@v10
+      with:
+        name: dapp
+
+    - name: Install dependencies
+      run: nix-shell --run 'make'
+
+    - name: Build the contracts
+      run: nix-shell --run 'dapp build'
+
+    - name: Run Slither
+      uses: crytic/slither-action@v0.1.0
+      with:
+        ignore-compile: true
