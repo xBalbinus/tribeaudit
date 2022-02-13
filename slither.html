@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- This file was created with the aha Ansi HTML Adapter. https://github.com/theZiz/aha -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xml+xhtml; charset=UTF-8"/>
+<title>Tribe Turbo slither output - solc 0.8.10</title>
+</head>
+<body style="color:white; background-color:black">
+<pre>
+<span style="filter: contrast(70%) brightness(190%);color:yellow;">
+FixedPointMathLib.rpow(uint256,uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#74-160) performs a multiplication on the result of a division:
+	-x = xxRound_rpow_asm_0 / scalar (solmate/src/utils/FixedPointMathLib.sol#131)
+	-zx_rpow_asm_0 = z * x (solmate/src/utils/FixedPointMathLib.sol#136)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply</span>
+<span style="filter: contrast(70%) brightness(190%);color:yellow;">
+LibFuse.viewExchangeRate(CERC20) (libcompound/src/LibFuse.sol#17-55) uses a dangerous strict equality:
+	- accrualBlockNumberPrior == block.number (libcompound/src/LibFuse.sol#20)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities</span>
+<span style="filter: contrast(70%) brightness(190%);color:yellow;">
+TurboSafe.afterDeposit(uint256,uint256) (TurboSafe.sol#118-124) ignores return value by asset.approve(address(underlyingTurboCToken),underlyingAmount) (TurboSafe.sol#120)
+TurboSafe.boost(ERC4626,uint256) (TurboSafe.sol#146-173) ignores return value by vault.deposit(feiAmount,address(this)) (TurboSafe.sol#172)
+TurboSafe.less(ERC4626,uint256) (TurboSafe.sol#185-215) ignores return value by vault.withdraw(feiAmount,address(this),address(this)) (TurboSafe.sol#198)
+TurboSafe.slurp(ERC4626) (TurboSafe.sol#236-265) ignores return value by vault.withdraw(protocolFeeAmount,address(this),address(master)) (TurboSafe.sol#264)
+TurboGibber.impound(TurboSafe,uint256,uint256,address) (modules/TurboGibber.sol#69-91) ignores return value by fei.approve(address(feiTurboCToken),feiAmount) (modules/TurboGibber.sol#84)
+TurboGibber.impoundAll(TurboSafe,address) (modules/TurboGibber.sol#96-122) ignores return value by fei.approve(address(feiTurboCToken),feiAmount) (modules/TurboGibber.sol#115)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Auth.setOwner(address).newOwner (solmate/src/auth/Auth.sol#48) lacks a zero-check on :
+		- owner = newOwner (solmate/src/auth/Auth.sol#49)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Reentrancy in TurboSafe.boost(ERC4626,uint256) (TurboSafe.sol#146-173):
+	External calls:
+	- master.onSafeBoost(asset,vault,feiAmount) (TurboSafe.sol#152)
+	State variables written after the call(s):
+	- getTotalFeiBoostedForVault[vault] += feiAmount (TurboSafe.sol#160)
+	- totalFeiBoosted += feiAmount (TurboSafe.sol#155)
+Reentrancy in TurboMaster.createSafe(ERC20) (TurboMaster.sol#181-209):
+	External calls:
+	- safe = new TurboSafe(msg.sender,defaultSafeAuthority,underlying) (TurboMaster.sol#183)
+	State variables written after the call(s):
+	- getSafeId[safe] = id (TurboMaster.sol#195)
+	- safes.push(safe) (TurboMaster.sol#186)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Reentrancy in TurboSafe.boost(ERC4626,uint256) (TurboSafe.sol#146-173):
+	External calls:
+	- master.onSafeBoost(asset,vault,feiAmount) (TurboSafe.sol#152)
+	Event emitted after the call(s):
+	- VaultBoosted(msg.sender,vault,feiAmount) (TurboSafe.sol#163)
+Reentrancy in TurboMaster.createSafe(ERC20) (TurboMaster.sol#181-209):
+	External calls:
+	- safe = new TurboSafe(msg.sender,defaultSafeAuthority,underlying) (TurboMaster.sol#183)
+	Event emitted after the call(s):
+	- TurboSafeCreated(msg.sender,underlying,safe,id) (TurboMaster.sol#197)
+Reentrancy in TurboGibber.impoundAll(TurboSafe,address) (modules/TurboGibber.sol#96-122):
+	External calls:
+	- underlyingAmount = underlyingCToken.balanceOfUnderlying(address(safe)) (modules/TurboGibber.sol#104)
+	- feiAmount = underlyingCToken.borrowBalanceCurrent(address(safe)) (modules/TurboGibber.sol#107)
+	Event emitted after the call(s):
+	- ImpoundExecuted(msg.sender,safe,feiAmount,underlyingAmount) (modules/TurboGibber.sol#109)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+ERC20.permit(address,address,uint256,uint256,uint8,bytes32,bytes32) (solmate/src/tokens/ERC20.sol#116-157) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(deadline &gt;= block.timestamp,PERMIT_DEADLINE_EXPIRED) (solmate/src/tokens/ERC20.sol#125)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+FixedPointMathLib.mulDivDown(uint256,uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#34-51) uses assembly
+	- INLINE ASM (solmate/src/utils/FixedPointMathLib.sol#39-50)
+FixedPointMathLib.mulDivUp(uint256,uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#53-72) uses assembly
+	- INLINE ASM (solmate/src/utils/FixedPointMathLib.sol#58-71)
+FixedPointMathLib.rpow(uint256,uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#74-160) uses assembly
+	- INLINE ASM (solmate/src/utils/FixedPointMathLib.sol#79-159)
+FixedPointMathLib.sqrt(uint256) (solmate/src/utils/FixedPointMathLib.sol#166-221) uses assembly
+	- INLINE ASM (solmate/src/utils/FixedPointMathLib.sol#167-220)
+SafeTransferLib.safeTransferETH(address,uint256) (solmate/src/utils/SafeTransferLib.sol#16-25) uses assembly
+	- INLINE ASM (solmate/src/utils/SafeTransferLib.sol#19-22)
+SafeTransferLib.safeTransferFrom(ERC20,address,address,uint256) (solmate/src/utils/SafeTransferLib.sol#31-55) uses assembly
+	- INLINE ASM (solmate/src/utils/SafeTransferLib.sol#39-52)
+SafeTransferLib.safeTransfer(ERC20,address,uint256) (solmate/src/utils/SafeTransferLib.sol#57-79) uses assembly
+	- INLINE ASM (solmate/src/utils/SafeTransferLib.sol#64-76)
+SafeTransferLib.safeApprove(ERC20,address,uint256) (solmate/src/utils/SafeTransferLib.sol#81-103) uses assembly
+	- INLINE ASM (solmate/src/utils/SafeTransferLib.sol#88-100)
+SafeTransferLib.didLastOptionalReturnCallSucceed(bool) (solmate/src/utils/SafeTransferLib.sol#109-140) uses assembly
+	- INLINE ASM (solmate/src/utils/SafeTransferLib.sol#110-139)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Different versions of Solidity is used:
+	- Version used: ['0.8.10', '&gt;=0.8.0']
+	- 0.8.10 (libcompound/src/LibFuse.sol#2)
+	- 0.8.10 (libcompound/src/interfaces/CERC20.sol#2)
+	- 0.8.10 (libcompound/src/interfaces/InterestRateModel.sol#2)
+	- &gt;=0.8.0 (solmate/src/auth/Auth.sol#2)
+	- &gt;=0.8.0 (solmate/src/mixins/ERC4626.sol#2)
+	- &gt;=0.8.0 (solmate/src/tokens/ERC20.sol#2)
+	- &gt;=0.8.0 (solmate/src/utils/FixedPointMathLib.sol#2)
+	- &gt;=0.8.0 (solmate/src/utils/ReentrancyGuard.sol#2)
+	- &gt;=0.8.0 (solmate/src/utils/SafeTransferLib.sol#2)
+	- 0.8.10 (TurboMaster.sol#2)
+	- 0.8.10 (TurboSafe.sol#2)
+	- 0.8.10 (interfaces/Comptroller.sol#2)
+	- 0.8.10 (interfaces/Fei.sol#2)
+	- 0.8.10 (interfaces/FuseAdmin.sol#2)
+	- 0.8.10 (modules/TurboBooster.sol#2)
+	- 0.8.10 (modules/TurboClerk.sol#2)
+	- 0.8.10 (modules/TurboGibber.sol#2)
+	- 0.8.10 (test/TurboMaster.t.sol#2)
+	- 0.8.10 (test/TurboSafe.t.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#different-pragma-directives-are-used</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+ERC4626.afterDeposit(uint256,uint256) (solmate/src/mixins/ERC4626.sol#180) is never used and should be removed
+ERC4626.beforeWithdraw(uint256,uint256) (solmate/src/mixins/ERC4626.sol#178) is never used and should be removed
+FixedPointMathLib.divWadUp(uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#26-28) is never used and should be removed
+FixedPointMathLib.mulWadUp(uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#18-20) is never used and should be removed
+FixedPointMathLib.rpow(uint256,uint256,uint256) (solmate/src/utils/FixedPointMathLib.sol#74-160) is never used and should be removed
+FixedPointMathLib.sqrt(uint256) (solmate/src/utils/FixedPointMathLib.sol#166-221) is never used and should be removed
+SafeTransferLib.safeTransferETH(address,uint256) (solmate/src/utils/SafeTransferLib.sol#16-25) is never used and should be removed
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dead-code</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Pragma version0.8.10 (libcompound/src/LibFuse.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (libcompound/src/interfaces/CERC20.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (libcompound/src/interfaces/InterestRateModel.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version&gt;=0.8.0 (solmate/src/auth/Auth.sol#2) allows old versions
+Pragma version&gt;=0.8.0 (solmate/src/mixins/ERC4626.sol#2) allows old versions
+Pragma version&gt;=0.8.0 (solmate/src/tokens/ERC20.sol#2) allows old versions
+Pragma version&gt;=0.8.0 (solmate/src/utils/FixedPointMathLib.sol#2) allows old versions
+Pragma version&gt;=0.8.0 (solmate/src/utils/ReentrancyGuard.sol#2) allows old versions
+Pragma version&gt;=0.8.0 (solmate/src/utils/SafeTransferLib.sol#2) allows old versions
+Pragma version0.8.10 (TurboMaster.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (TurboSafe.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (interfaces/Comptroller.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (interfaces/Fei.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (interfaces/FuseAdmin.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (modules/TurboBooster.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (modules/TurboClerk.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (modules/TurboGibber.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (test/TurboMaster.t.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+Pragma version0.8.10 (test/TurboSafe.t.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.7
+solc-0.8.10 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Variable ERC4626.ONE (solmate/src/mixins/ERC4626.sol#28) is not in mixedCase
+Function ERC20.DOMAIN_SEPARATOR() (solmate/src/tokens/ERC20.sol#159-161) is not in mixedCase
+Variable ERC20.INITIAL_CHAIN_ID (solmate/src/tokens/ERC20.sol#41) is not in mixedCase
+Variable ERC20.INITIAL_DOMAIN_SEPARATOR (solmate/src/tokens/ERC20.sol#43) is not in mixedCase
+Function FuseAdmin._setWhitelistStatuses(address[],bool[]) (interfaces/FuseAdmin.sol#11) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+Variable TurboMaster.getTotalBoostedAgainstCollateral (TurboMaster.sol#154) is too similar to TurboMaster.onSafeBoost(ERC20,ERC4626,uint256).newTotalBoostedAgainstCollateral (TurboMaster.sol#234)
+Variable TurboMaster.getTotalBoostedForVault (TurboMaster.sol#151) is too similar to TurboMaster.onSafeBoost(ERC20,ERC4626,uint256).newTotalBoostedForVault (TurboMaster.sol#231)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#variable-names-are-too-similar</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+FixedPointMathLib.sqrt(uint256) (solmate/src/utils/FixedPointMathLib.sol#166-221) uses literals with too many digits:
+	- ! y_sqrt_asm_0 &lt; 0x100000000000000000000000000000000 (solmate/src/utils/FixedPointMathLib.sol#175-178)
+FixedPointMathLib.sqrt(uint256) (solmate/src/utils/FixedPointMathLib.sol#166-221) uses literals with too many digits:
+	- ! y_sqrt_asm_0 &lt; 0x10000000000000000 (solmate/src/utils/FixedPointMathLib.sol#179-182)
+FixedPointMathLib.sqrt(uint256) (solmate/src/utils/FixedPointMathLib.sol#166-221) uses literals with too many digits:
+	- ! y_sqrt_asm_0 &lt; 0x100000000 (solmate/src/utils/FixedPointMathLib.sol#183-186)
+SafeTransferLib.safeTransferFrom(ERC20,address,address,uint256) (solmate/src/utils/SafeTransferLib.sol#31-55) uses literals with too many digits:
+	- mstore(uint256,uint256)(freeMemoryPointer_safeTransferFrom_asm_0,0x23b872dd00000000000000000000000000000000000000000000000000000000) (solmate/src/utils/SafeTransferLib.sol#44)
+SafeTransferLib.safeTransfer(ERC20,address,uint256) (solmate/src/utils/SafeTransferLib.sol#57-79) uses literals with too many digits:
+	- mstore(uint256,uint256)(freeMemoryPointer_safeTransfer_asm_0,0xa9059cbb00000000000000000000000000000000000000000000000000000000) (solmate/src/utils/SafeTransferLib.sol#69)
+SafeTransferLib.safeApprove(ERC20,address,uint256) (solmate/src/utils/SafeTransferLib.sol#81-103) uses literals with too many digits:
+	- mstore(uint256,uint256)(freeMemoryPointer_safeApprove_asm_0,0x095ea7b300000000000000000000000000000000000000000000000000000000) (solmate/src/utils/SafeTransferLib.sol#93)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+CERC20 (libcompound/src/interfaces/CERC20.sol#8-48) does not implement functions:
+	- CERC20.accrualBlockNumber() (libcompound/src/interfaces/CERC20.sol#33)
+	- CERC20.adminFeeMantissa() (libcompound/src/interfaces/CERC20.sol#29)
+	- CERC20.balanceOfUnderlying(address) (libcompound/src/interfaces/CERC20.sol#37)
+	- CERC20.borrow(uint256) (libcompound/src/interfaces/CERC20.sol#11)
+	- CERC20.borrowBalanceCurrent(address) (libcompound/src/interfaces/CERC20.sol#41)
+	- CERC20.exchangeRateCurrent() (libcompound/src/interfaces/CERC20.sol#23)
+	- CERC20.exchangeRateStored() (libcompound/src/interfaces/CERC20.sol#31)
+	- CERC20.fuseFeeMantissa() (libcompound/src/interfaces/CERC20.sol#27)
+	- CERC20.initialExchangeRateMantissa() (libcompound/src/interfaces/CERC20.sol#45)
+	- CERC20.interestRateModel() (libcompound/src/interfaces/CERC20.sol#43)
+	- CERC20.mint(uint256) (libcompound/src/interfaces/CERC20.sol#9)
+	- CERC20.redeemUnderlying(uint256) (libcompound/src/interfaces/CERC20.sol#35)
+	- CERC20.repayBorrow(uint256) (libcompound/src/interfaces/CERC20.sol#19)
+	- CERC20.repayBorrowBehalf(address,uint256) (libcompound/src/interfaces/CERC20.sol#47)
+	- CERC20.reserveFactorMantissa() (libcompound/src/interfaces/CERC20.sol#39)
+	- CERC20.totalAdminFees() (libcompound/src/interfaces/CERC20.sol#25)
+	- CERC20.totalBorrows() (libcompound/src/interfaces/CERC20.sol#15)
+	- CERC20.totalFuseFees() (libcompound/src/interfaces/CERC20.sol#17)
+	- CERC20.totalReserves() (libcompound/src/interfaces/CERC20.sol#21)
+	- CERC20.underlying() (libcompound/src/interfaces/CERC20.sol#13)
+Fei (interfaces/Fei.sol#9-11) does not implement functions:
+	- Fei.mint(address,uint256) (interfaces/Fei.sol#10)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unimplemented-functions</span>
+<span style="filter: contrast(70%) brightness(190%);color:lime;">
+setAuthority(Authority) should be declared external:
+	- Auth.setAuthority(Authority) (solmate/src/auth/Auth.sol#38-46)
+setOwner(address) should be declared external:
+	- Auth.setOwner(address) (solmate/src/auth/Auth.sol#48-52)
+deposit(uint256,address) should be declared external:
+	- ERC4626.deposit(uint256,address) (solmate/src/mixins/ERC4626.sol#46-58)
+mint(uint256,address) should be declared external:
+	- ERC4626.mint(uint256,address) (solmate/src/mixins/ERC4626.sol#60-71)
+withdraw(uint256,address,address) should be declared external:
+	- ERC4626.withdraw(uint256,address,address) (solmate/src/mixins/ERC4626.sol#73-93)
+redeem(uint256,address,address) should be declared external:
+	- ERC4626.redeem(uint256,address,address) (solmate/src/mixins/ERC4626.sol#95-114)
+assetsPerShare() should be declared external:
+	- ERC4626.assetsPerShare() (solmate/src/mixins/ERC4626.sol#126-128)
+maxDeposit(address) should be declared external:
+	- ERC4626.maxDeposit(address) (solmate/src/mixins/ERC4626.sol#158-160)
+maxMint(address) should be declared external:
+	- ERC4626.maxMint(address) (solmate/src/mixins/ERC4626.sol#162-164)
+maxWithdraw(address) should be declared external:
+	- ERC4626.maxWithdraw(address) (solmate/src/mixins/ERC4626.sol#166-168)
+maxRedeem(address) should be declared external:
+	- ERC4626.maxRedeem(address) (solmate/src/mixins/ERC4626.sol#170-172)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (solmate/src/tokens/ERC20.sol#68-74)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (solmate/src/tokens/ERC20.sol#76-88)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (solmate/src/tokens/ERC20.sol#90-110)
+permit(address,address,uint256,uint256,uint8,bytes32,bytes32) should be declared external:
+	- ERC20.permit(address,address,uint256,uint256,uint8,bytes32,bytes32) (solmate/src/tokens/ERC20.sol#116-157)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external</span>
+. analyzed (18 contracts with 77 detectors), 82 result(s) found
+</pre>
+</body>
+</html>
