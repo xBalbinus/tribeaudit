@@ -8,6 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v15
+      - uses: cachix/cachix-action@v10
+        with:
+          name: dapp
       - name: Install and make
         run: make
       - uses: crytic/slither-action@v0.1.0
