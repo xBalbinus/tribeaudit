@@ -54,7 +54,7 @@ Remove the nonReentrant modifier from the `beforeWithdraw` and `afterDeposit` in
 ## 3. Remove unnecessary nonReentrant modifiers for gas savings
 
 The only two functions that benefit from the nonReentrant modifier are the `boost` and `slurp` functions of TurboSafe.sol.
-The other functions can remove the nonReentrant modifier.
+The other functions can remove the nonReentrant modifier because they either 1. do not modify state variables or 2. follow the checks-effects-interaction pattern. As a result, the ReentrancyGuard import in TurboGibber.sol can be completely removed.
 
 ## Proof of concept/Steps to Reproduce
 
@@ -110,7 +110,33 @@ Cache value for gas savings
 
 ----
 
-## 5. Comment typo
+## 5. Unnecessary unchecked clause
+
+There is an unchecked clause in TurboMaster.sol around code that performs no arithmetic operations. The unchecked clause can be removed because it doesn't provide gas savings.
+
+## Proof of concept/Steps to Reproduce
+
+[Lines 252-260 of TurboMaster.sol](https://github.com/fei-protocol/tribe-turbo/blob/fcdabb7ca87065d64b296d3519f3f62c675684b6/src/TurboMaster.sol#L252-L260) have an unnecessary unchecked clause. The code inside the clause only sets two variables and does not benefit from unchecked
+```
+getTotalBoostedForVault[vault] = newTotalBoostedForVault;
+getTotalBoostedAgainstCollateral[underlying] = newTotalBoostedAgainstCollateral;
+```
+
+## Impact
+
+Clean code
+
+## Risk Breakdown
+
+No risk
+
+## Recommendation
+
+Remove unnecessary unchecked clause
+
+----
+
+## 6. Comment typo
 
 There is a typo in a comment
 
