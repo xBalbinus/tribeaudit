@@ -249,15 +249,12 @@ contract TurboMaster is Auth {
         // Update the total amount of Fei being using to boost Vaults.
         totalBoosted += feiAmount;
 
-        unchecked {
-            // Update the total amount of Fei being using to boost the Vault.
-            // Cannot overflow because a Safe's total will never be greater than global total.
-            getTotalBoostedForVault[vault] = newTotalBoostedForVault;
+        // NOTE: no need for unchecked as there is no arithmetic being performed
+        // Update the total amount of Fei being using to boost the Vault.
+        getTotalBoostedForVault[vault] = newTotalBoostedForVault;
 
-            // Update the total amount of Fei boosted against the collateral type.
-            // Cannot overflow because a collateral type's total will never be greater than global total.
-            getTotalBoostedAgainstCollateral[underlying] = newTotalBoostedAgainstCollateral;
-        }
+        // Update the total amount of Fei boosted against the collateral type.
+        getTotalBoostedAgainstCollateral[underlying] = newTotalBoostedAgainstCollateral;
     }
 
     /// @notice Callback triggered whenever a Safe withdraws from a Vault.
