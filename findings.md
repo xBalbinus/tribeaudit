@@ -57,18 +57,56 @@ Add missing word to comment
 
 ## 3. nonReentrant modifier on internal function causes revert
 
-A clear and concise description of the bug.
+The two TurboSafe.sol internal functions `beforeWithdraw` and `afterDeposit` override ERC4626 functions but add the nonReentrant modifier. When these internal nonReentrant functions are called from the `boost` and `less` public nonReentrant functions in TurboSafe.sol, they will revert.
 
 ## Proof of concept/Steps to Reproduce
 
+See demo code which can be imported into Remix: [https://remix.ethereum.org/](https://remix.ethereum.org/)
+
 ## Impact
 
+High, because the functions cannot be used in current form
+
 ## Risk Breakdown
-Difficulty to Exploit: Easy
-Weakness:
-CVSS2 Score:
+Difficulty to Exploit: Easy, just use the contract normally and experience a revert
 
 ## Recommendation
 
-## References
+Remove the nonReentrant modifier from the `beforeWithdraw` and `afterDeposit` internal functions
 
+
+----
+
+## 4. Gas optimization in TurboClerk.sol
+
+A small gas savings in TurboClerk.sol is possible
+
+t11s mentioned this during the walkthrough but we include it for completeness.
+
+## Proof of concept/Steps to Reproduce
+
+[Line 108 of TurboClerk.sol](https://github.com/fei-protocol/tribe-turbo/blob/fcdabb7ca87065d64b296d3519f3f62c675684b6/src/modules/TurboClerk.sol#L108)
+
+```
+if (getCustomFeePercentageForSafe[safe] != 0) return getCustomFeePercentageForSafe[safe];
+```
+
+we can cache this value for gas savings. The updated code might look like
+
+```
+// Get the custom fee percentage set for the Safe
+uint256 customFeePercentageForSafe = getCustomFeePercentageForSafe[safe];
+if (customFeePercentageForSafe != 0) return customFeePercentageForSafe;
+```
+
+## Impact
+
+Gas savings
+
+## Risk Breakdown
+
+None
+
+## Recommendation
+
+Cache value for gas savings
