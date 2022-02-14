@@ -28,34 +28,9 @@ Easy, swap the withdraw function parameters to the following:
 // If we have unaccrued fees, withdraw them from the Vault and transfer them to the Master.
 if (protocolFeeAmount != 0) vault.withdraw(protocolFeeAmount, address(master), address(this));
 ```
-
 ----
 
-## 2. Comment typo
-
-There is a typo in a comment
-
-## Proof of concept/Steps to Reproduce
-
-The word "Safe" should be added to the end of this comment in [TurboSafe.sol line 243](https://github.com/fei-protocol/tribe-turbo/blob/fcdabb7ca87065d64b296d3519f3f62c675684b6/src/TurboSafe.sol#L243)
-
-```
-// Compute what percentage of the interest earned will go back to the
-```
-
-## Impact
-Developer confusion :)
-
-## Risk Breakdown
-No risk
-
-## Recommendation
-
-Add missing word to comment
-
-----
-
-## 3. nonReentrant modifier on internal function causes revert
+## 2. nonReentrant modifier on internal function causes revert
 
 The two TurboSafe.sol internal functions `beforeWithdraw` and `afterDeposit` override ERC4626 functions but add the nonReentrant modifier. When these internal nonReentrant functions are called from the `boost` and `less` public nonReentrant functions in TurboSafe.sol, they will revert.
 
@@ -74,6 +49,28 @@ Difficulty to Exploit: Easy, just use the contract normally and experience a rev
 
 Remove the nonReentrant modifier from the `beforeWithdraw` and `afterDeposit` internal functions
 
+----
+
+## 3. Remove unnecessary nonReentrant modifiers for gas savings
+
+The only two functions that benefit from the nonReentrant modifier are the `boost` and `slurp` functions of TurboSafe.sol.
+The other functions can remove the nonReentrant modifier.
+
+## Proof of concept/Steps to Reproduce
+
+Manual testing
+
+## Impact
+
+Gas savings
+
+## Risk Breakdown
+
+Gas savings
+
+## Recommendation
+
+Remove the nonReentrant modifier from all functions besides `boost` and `slurp`
 
 ----
 
@@ -110,3 +107,27 @@ None
 ## Recommendation
 
 Cache value for gas savings
+
+----
+
+## 5. Comment typo
+
+There is a typo in a comment
+
+## Proof of concept/Steps to Reproduce
+
+The word "Safe" should be added to the end of this comment in [TurboSafe.sol line 243](https://github.com/fei-protocol/tribe-turbo/blob/fcdabb7ca87065d64b296d3519f3f62c675684b6/src/TurboSafe.sol#L243)
+
+```
+// Compute what percentage of the interest earned will go back to the
+```
+
+## Impact
+Developer confusion :)
+
+## Risk Breakdown
+No risk
+
+## Recommendation
+
+Add missing word to comment
